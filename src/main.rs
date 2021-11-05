@@ -1,4 +1,6 @@
+use cgmath::{Array, Vector3};
 use clap::{Arg, App};
+use mitsuba_raster::obj::Obj;
 
 fn main() {
     let matched = App::new("mitsuba-raster")
@@ -16,5 +18,5 @@ fn main() {
 
     let file_path = matched.value_of("file_path").unwrap();
 
-    
+    let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
 }
