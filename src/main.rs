@@ -41,11 +41,15 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
 
     //ビュー変換
     scene.as_mut().view_convert();
+    println!("view convert");
     //投影変換
     scene.as_mut().projection_convert();
+    println!("projection convert");
     //Perspective Division
     scene.as_mut().perspective_division();
+    println!("perspective division");
 
     //画像保存
     scene.generate_image("./output.ppm").expect("failed output image");
+    println!("generate image");
 }

@@ -44,7 +44,7 @@ impl Image {
         for j in 0..self.height {
             for i in 0..self.width {
                 let index = i + self.width * j;
-                let rgb = self.canvas[index].map(|kd| { clamp(kd * 255.0, 255.0, 0.0) });
+                let rgb = self.canvas[index].map(|kd| { clamp(kd * 255.0, 0.0, 255.0) });
 
                 writer.write_all(format!("{} {} {}\r\n", rgb.x, rgb.y, rgb.z).as_bytes())?;
             }
