@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use cgmath::Array;
 use cgmath::Matrix4;
 use cgmath::Vector3;
@@ -11,7 +13,9 @@ pub struct Obj {
 }
 
 impl Obj {
-    pub fn new(file_path: &str, center_position: Vector3<f32>) -> Self {
+    pub fn new<'a>(file_path: impl Into<Cow<'a, str>>, center_position: Vector3<f32>) -> Self {
+        let file_path: &str = &file_path.into();
+        
         let (models, _) = 
             tobj::load_obj(
                 file_path,

@@ -1,6 +1,8 @@
+use std::borrow::Cow;
+
 use cgmath::{Array, Vector3};
 use clap::{Arg, App};
-use mitsuba_raster::{camera::Camera, obj::Obj, screen::Screen};
+use mitsuba_raster::{camera::Camera, obj::Obj, screen::Screen, scene::Scene};
 
 fn main() {
     let matched = App::new("mitsuba-raster")
@@ -16,7 +18,11 @@ fn main() {
         )
         .get_matches();
 
-    let file_path = matched.value_of("file_path").unwrap();
+    rasterize(matched.value_of("file_path").unwrap());
+}
+
+fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
+    let file_path = file_path.into();
 
     let screen = Screen::new(2.0, 10.0, 1.0, 1.0);
     let camera = Camera::new(
@@ -27,5 +33,5 @@ fn main() {
 
     let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
     
-    
+    let scene = Scene::new(camera, target_obj);
 }
