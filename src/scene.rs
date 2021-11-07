@@ -7,7 +7,6 @@ use cgmath::Vector3;
 use cgmath::Vector4;
 
 use crate::camera::Camera;
-use crate::image;
 use crate::image::Image;
 use crate::obj::Obj;
 use crate::screen::Screen;
