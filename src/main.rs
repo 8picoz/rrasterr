@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use cgmath::{Array, Vector3};
 use clap::{Arg, App};
-use mitsuba_raster::{camera::Camera, obj::Obj, screen::Screen, scene::Scene};
+use mitsuba_raster::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
 
 fn main() {
     let matched = App::new("mitsuba-raster")
@@ -26,6 +26,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
     //セットアップ
     let file_path = file_path.into();
 
+    let image = Image::new(512, 512);
+
     let screen = Screen::new(2.0, 10.0, 1.0, 1.0);
     let camera = Camera::new(
         Vector3::new(0.0, 6.0, 28.0), 
@@ -35,8 +37,15 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
 
     let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
     
-    let mut scene = Scene::new(camera, target_obj);
+    let mut scene = Scene::new(image, camera, target_obj);
 
     //ビュー変換
     scene.as_mut().view_convert();
+    //投影変換
+    scene.as_mut().projection_convert();
+    //Perspective Division
+    scene.as_mut().perspective_division();
+
+    //画像保存
+    scene.generate_image("./output.ppm").expect("failed output image");
 }

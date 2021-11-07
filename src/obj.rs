@@ -35,11 +35,11 @@ impl Obj {
             println!("position[{}].positions     = {}", i, mesh.positions.len() / 3);
 
             let mut next_face = 0;
-            for face in 0..face_count {
+            for _face in 0..face_count {
                 let end = next_face + 3;
 
                 let face_indices = &mesh.indices[next_face..end];
-                println!("face[{}].indices          = {:?}", face, face_indices);
+                println!("face[{}].indices          = {:?}", _face, face_indices);
 
                 triangles.push(Triangle::new(
                     Vector4::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize], 1.0),
@@ -51,7 +51,6 @@ impl Obj {
             }
         }
 
-        println!("{:?}", triangles);
         Self { center_position, triangles }
     }
 
