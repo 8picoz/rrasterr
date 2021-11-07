@@ -112,16 +112,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a60553f9a9e039a333b4e9b20573b9e9b9c0bb3a11e201ccc48ef4283456d673"
 
 [[package]]
-name = "mitsuba-raster"
-version = "0.1.0"
-dependencies = [
- "cgmath",
- "clap",
- "num",
- "tobj",
-]
-
-[[package]]
 name = "num"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -202,6 +192,16 @@ name = "once_cell"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "692fcb63b64b1758029e0a96ee63e049ce8c5948587f2f7208df04625e5f6b56"
+
+[[package]]
+name = "rrasterr"
+version = "0.1.0"
+dependencies = [
+ "cgmath",
+ "clap",
+ "num",
+ "tobj",
+]
 
 [[package]]
 name = "strsim"

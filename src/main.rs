@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use cgmath::{Array, Vector3};
 use clap::{Arg, App};
-use mitsuba_raster::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
+use rrasterr::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
 
 fn main() {
     let matched = App::new("rrasterr")
