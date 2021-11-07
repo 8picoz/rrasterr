@@ -5,7 +5,7 @@ use clap::{Arg, App};
 use mitsuba_raster::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
 
 fn main() {
-    let matched = App::new("mitsuba-raster")
+    let matched = App::new("rrasterr")
         .version("0.1")
         .author("tata <8picoz@tata.pw>")
         .about("rasterizer")
