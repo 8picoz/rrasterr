@@ -4,7 +4,7 @@ use crate::camera::Camera;
 
 //TODO: なんかもっと良いファイル名
 
-pub fn view_matrix(camera: Camera) -> Matrix4<f32> {
+pub fn view_matrix(camera: &Camera) -> Matrix4<f32> {
     let translation_matrix = Matrix4::new(
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,

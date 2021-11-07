@@ -22,6 +22,8 @@ fn main() {
 }
 
 fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
+
+    //セットアップ
     let file_path = file_path.into();
 
     let screen = Screen::new(2.0, 10.0, 1.0, 1.0);
@@ -33,5 +35,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
 
     let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
     
-    let scene = Scene::new(camera, target_obj);
+    let mut scene = Scene::new(camera, target_obj);
+
+    //ビュー変換
+    scene.as_mut().view_convert();
 }

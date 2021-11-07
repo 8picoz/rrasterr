@@ -20,7 +20,7 @@ impl Triangle {
     }
 
     pub fn iter(&self) -> TriangleIter{
-        TriangleIter { triangle: &self, now: 0 }
+        TriangleIter { triangle: self, now: 0 }
     }
 }
 
