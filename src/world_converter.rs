@@ -1,10 +1,13 @@
 use cgmath::Matrix4;
 
 use crate::camera::Camera;
+use crate::screen::Screen;
 
 //TODO: なんかもっと良いファイル名
 
-pub fn view_matrix(camera: &Camera) -> Matrix4<f32> {
+type Mat4f = Matrix4<f32>;
+
+pub fn view_matrix(camera: &Camera) -> Mat4f {
     let translation_matrix = Matrix4::new(
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
@@ -20,4 +23,13 @@ pub fn view_matrix(camera: &Camera) -> Matrix4<f32> {
     );
 
     rotation_matrix * translation_matrix
+}
+
+pub fn projection_matrix(screen: &Screen) -> Mat4f {
+    Matrix4::new(
+        (2.0 * screen.n) / screen.w, 0.0, 0.0, 0.0,
+        0.0, (2.0 * screen.n) / screen.h, 0.0, 0.0,
+        0.0, 0.0, - ((screen.f + screen.n) / (screen.f - screen.n)), -1.0,
+        0.0, 0.0, - ((2.0 * screen.f * screen.n) / (screen.f - screen.n)), 0.0
+    )
 }
