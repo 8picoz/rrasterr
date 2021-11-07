@@ -1,5 +1,6 @@
 use cgmath::Array;
 use cgmath::Vector3;
+use cgmath::Vector4;
 
 use crate::triangle::Triangle;
 
@@ -19,7 +20,7 @@ impl Obj {
 
         println!("Number of models          = {}", models.len());
     
-        let mut triangles = vec![Triangle::new(Vector3::from_value(0.0), Vector3::from_value(0.0), Vector3::from_value(0.0))];
+        let mut triangles = vec![Triangle::new(Vector4::from_value(0.0), Vector4::from_value(0.0), Vector4::from_value(0.0))];
         for (i, m) in models.iter().enumerate() {
             let mesh = &m.mesh;
             
@@ -36,9 +37,9 @@ impl Obj {
                 println!("face[{}].indices          = {:?}", face, face_indices);
 
                 triangles.push(Triangle::new(
-                    Vector3::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize]),
-                    Vector3::new(mesh.positions[(3 * face_indices[1]) as usize], mesh.positions[(3 * face_indices[1] + 1) as usize], mesh.positions[(3 * face_indices[1] + 2) as usize]),
-                    Vector3::new(mesh.positions[(3 * face_indices[2]) as usize], mesh.positions[(3 * face_indices[2] + 1) as usize], mesh.positions[(3 * face_indices[2] + 2) as usize]),
+                    Vector4::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize], 1.0),
+                    Vector4::new(mesh.positions[(3 * face_indices[1]) as usize], mesh.positions[(3 * face_indices[1] + 1) as usize], mesh.positions[(3 * face_indices[1] + 2) as usize], 1.0),
+                    Vector4::new(mesh.positions[(3 * face_indices[2]) as usize], mesh.positions[(3 * face_indices[2] + 1) as usize], mesh.positions[(3 * face_indices[2] + 2) as usize], 1.0),
                 ));
             
                 next_face = end;

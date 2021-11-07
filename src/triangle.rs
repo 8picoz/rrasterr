@@ -1,16 +1,16 @@
-use cgmath::Vector3;
+use cgmath::Vector4;
 
-type Vec3f = Vector3<f32>;
+type Vec4f = Vector4<f32>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Triangle {
-    pub x: Vec3f,
-    pub y: Vec3f,
-    pub z: Vec3f,
+    pub x: Vec4f,
+    pub y: Vec4f,
+    pub z: Vec4f,
 }
 
 impl Triangle {
-    pub fn new(x: Vec3f, y: Vec3f, z: Vec3f) -> Self {
+    pub fn new(x: Vec4f, y: Vec4f, z: Vec4f) -> Self {
         Self { x, y, z }
     }
 }
