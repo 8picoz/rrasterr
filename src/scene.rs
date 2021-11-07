@@ -8,7 +8,7 @@ use cgmath::Vector4;
 
 use crate::camera::Camera;
 use crate::image::Image;
-use crate::obj;
+
 use crate::obj::Obj;
 use crate::screen::Screen;
 use crate::triangle::Triangle;
