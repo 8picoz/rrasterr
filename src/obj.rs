@@ -1,4 +1,5 @@
 use cgmath::Array;
+use cgmath::Matrix4;
 use cgmath::Vector3;
 use cgmath::Vector4;
 
@@ -48,5 +49,10 @@ impl Obj {
 
         println!("{:?}", triangles);
         Self { center_position, triangles }
+    }
+
+    pub fn convert(&mut self, mat: Matrix4<f32>) {
+        //immutable
+        self.triangles = self.triangles.iter().map(|tri| Triangle::new(mat * tri.x, mat * tri.y, mat * tri.z)).collect();
     }
 }
