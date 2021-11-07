@@ -19,4 +19,6 @@ fn main() {
     let file_path = matched.value_of("file_path").unwrap();
 
     let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
+
+    
 }
