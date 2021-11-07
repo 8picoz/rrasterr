@@ -39,6 +39,9 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
     
     let mut scene = Scene::new(image, camera, target_obj);
 
+    //モデル変換
+    //原点から移動させるつもりがない限り入らない
+
     //ビュー変換
     scene.as_mut().view_convert();
     println!("view convert");

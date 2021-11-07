@@ -1,3 +1,5 @@
 /target
 /models
 output.ppm
+output.png
+.DS_Store
