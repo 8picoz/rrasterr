@@ -28,6 +28,10 @@ impl Image {
     pub fn set_pixel(&mut self, x: usize, y: usize, kd: Vector3<f32>) {
         let target_pixel_index = x + self.width * y;
 
+        if (x == 0) && (y == 0) {
+            println!("{:?}", kd);
+        }
+
         self.canvas[target_pixel_index] = kd;
     }
 

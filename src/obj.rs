@@ -25,7 +25,7 @@ impl Obj {
 
         println!("Number of models          = {}", models.len());
     
-        let mut triangles = vec![Triangle::new(Vector4::from_value(0.0), Vector4::from_value(0.0), Vector4::from_value(0.0))];
+        let mut triangles = vec![];
         for (i, m) in models.iter().enumerate() {
             let mesh = &m.mesh;
             
