@@ -39,6 +39,7 @@ impl Scene {
         self.obj.triangles = self.obj.triangles.iter().map(
             |tri| 
                 Triangle::new(
+                    //wはzとは逆方向に伸びたベクトル(?)
                     tri.x / tri.x.w,
                     tri.y / tri.y.w,
                     tri.z / tri.z.w
