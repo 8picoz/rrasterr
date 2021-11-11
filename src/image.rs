@@ -3,8 +3,10 @@ use std::fs::File;
 use std::io;
 use std::io::BufWriter;
 use std::io::Write;
+use std::isize;
 
 use cgmath::Array;
+use cgmath::Vector2;
 use cgmath::Vector3;
 use num::clamp;
 
@@ -25,9 +27,57 @@ impl Image {
         (self.width, self.height)
     }
 
-    pub fn set_pixel(&mut self, x: usize, y: usize, kd: Vector3<f32>) {
+    pub fn set_pixel(&mut self, x: isize, y: isize, kd: Vector3<f32>) {
+        //たまに物凄く大きな値がくるのを弾いている
+        //がそもそもそんなに大きな値が来るのが間違っているのでは？
+        if x < 0 || self.width as isize <= x || y < 0 || self.height as isize <= y { return; }
+
+        let x = x as usize;
+        let y = y as usize;
+
         let target_pixel_index = x + self.width * y;
         self.canvas[target_pixel_index] = kd;
+    }
+
+    //Bresenham's line algorithm
+    pub fn raster_line(&mut self, p1: Vector2<f32>, p2: Vector2<f32>, kd: Vector3<f32>) {
+        let (mut x1, mut y1) = (p1.x as isize, p1.y as isize);
+        let (mut x2, mut y2) = (p2.x as isize, p2.y as isize);
+        let mut trans = false;
+
+        if (x2 - x1).abs() < (y2 - y1).abs() {
+            //swap x1 y1
+            std::mem::swap(&mut x1, &mut y1);
+            //swap x2 y2
+            std::mem::swap(&mut x2, &mut y2);
+
+            trans = true;
+        }
+
+        if x1 > x2 {
+            //swap x1 x2
+            std::mem::swap(&mut x1, &mut x2);
+            //swap y1 y2
+            std::mem::swap(&mut y1, &mut y2);
+        }
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let delta = dy * 2;
+        let yd = if dy > 0 { 1 } else { -1 };
+        
+        let mut error = 0;
+        let mut y = y1;
+
+        for x in x1..=x2 {
+            let target_x = if trans { y } else { x };
+            let target_y = if trans { x } else { y };
+            self.set_pixel(target_x, target_y, kd);
+            error += delta;
+            if error > dx {
+                y += yd;
+                error -= dx * 2;
+            }
+        }
     }
 
     pub fn write_ppm(&self, output_name: impl Into<Cow<'static, str>>) -> io::Result<()> {

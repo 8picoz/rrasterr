@@ -137,9 +137,13 @@ impl Scene {
             let pixel_1 = Vector2::new(pixel_1.x * w as f32, pixel_1.y * h as f32);
             let pixel_2 = Vector2::new(pixel_2.x * w as f32, pixel_2.y * h as f32);
 
-            self.image.set_pixel(pixel_0.x as usize, pixel_0.y as usize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel_1.x as usize, pixel_1.y as usize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel_2.x as usize, pixel_2.y as usize, Vector3::from_value(1.0));
+            //self.image.set_pixel(pixel_0.x as usize, pixel_0.y as usize, Vector3::from_value(1.0));
+            //self.image.set_pixel(pixel_1.x as usize, pixel_1.y as usize, Vector3::from_value(1.0));
+            //self.image.set_pixel(pixel_2.x as usize, pixel_2.y as usize, Vector3::from_value(1.0));
+
+            self.image.raster_line(pixel_0, pixel_1, Vector3::from_value(1.0));
+            self.image.raster_line(pixel_1, pixel_2, Vector3::from_value(1.0));
+            self.image.raster_line(pixel_2, pixel_0, Vector3::from_value(1.0));
         }
 
         self.image.write_ppm(output_path.into())?;
