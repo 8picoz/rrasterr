@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use cgmath::Vector4;
 
 type Vec4f = Vector4<f32>;
@@ -35,6 +37,22 @@ impl<'a> Iterator for TriangleIter<'a> {
             Some(self.triangle.z)
         } else {
             None
+        }
+    }
+}
+
+impl Index<usize> for Triangle {
+    type Output = Vec4f;
+
+    fn index(&self, idx: usize) -> &Self::Output {
+        if idx == 0 {
+            &self.x
+        } else if idx == 1 {
+            &self.y
+        } else if idx == 2 {
+            &self.z
+        } else {
+            panic!("Index out of bounds");
         }
     }
 }

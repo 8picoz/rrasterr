@@ -1,8 +1,8 @@
 pub struct Screen {
-    //far clip
-    pub f: f32,
     //near clip
     pub n: f32,
+    //far clip
+    pub f: f32,
     //width
     pub w: f32,
     //height
@@ -10,7 +10,7 @@ pub struct Screen {
 }
 
 impl Screen {
-    pub fn new(f: f32, n: f32, w: f32, h: f32) -> Self {
-        Self { f, n, w, h }
+    pub fn new(n: f32, f: f32, w: f32, h: f32) -> Self {
+        Self { n, f, w, h }
     }
 }

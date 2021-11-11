@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use cgmath::Array;
 use cgmath::Matrix4;
 use cgmath::Vector3;
 use cgmath::Vector4;

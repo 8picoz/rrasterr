@@ -2,6 +2,7 @@ use std::borrow::Cow;
 use std::io::Result;
 
 use cgmath::Array;
+use cgmath::InnerSpace;
 use cgmath::Vector2;
 use cgmath::Vector3;
 use cgmath::Vector4;
@@ -14,6 +15,9 @@ use crate::triangle::Triangle;
 use crate::world_converter::projection_matrix;
 use crate::world_converter::view_matrix;
 
+type Vec4f = Vector4<f32>;
+
+//coordinate_state的なenumを持たせて現在の自分の状態を確認できるようにする
 pub struct Scene {
     image: Image,
     camera: Camera,
@@ -45,6 +49,80 @@ impl Scene {
                     tri.z / tri.z.w
                 )
         ).collect();
+    }
+
+    pub fn clipping(&mut self) {
+        //それぞれのクリップ面の内側への法線(?)
+        let clip_plane_normals = vec![
+            Vec4f::new(1.0, 0.0, 0.0, 1.0), //w=-x
+            Vec4f::new(-1.0, 0.0, 0.0, 1.0), //w=x
+            Vec4f::new(0.0, 1.0, 0.0, 1.0), //w=-y
+            Vec4f::new(0.0, -1.0, 0.0, 1.0), //w=y
+            Vec4f::new(0.0, 0.0, 1.0, 1.0), //w=-z
+            Vec4f::new(0.0, 0.0, -1.0, 1.0), //w=z
+            ];
+        
+        //辺とクリップ面の交差点探索
+        let intersect = |v1: Vec4f, v2: Vec4f, d1: f32, d2: f32| -> Vec4f {
+            let a = d1 / (d1 - d2);
+            (1.0 - a) * v1 + a * v2
+        };
+
+        //クリッピング後のtriangles
+        let mut triangles = vec![];
+
+        for triangle in &self.obj.triangles {
+            //Counter Clockwise Order
+            //この時点では頂点は3つしか入っていないが、クリッピング後に増えていく
+            let mut polygon = vec![triangle.x, triangle.y, triangle.z];
+            for normal in clip_plane_normals.clone() {
+                let mut cliped_polygon = vec![];
+                for index in 0..polygon.len() {
+                    // pick edge
+                    let v1 = polygon[index];
+                    let v2 = polygon[(index + 1) % polygon.len()];
+
+                    //v1が内側なら d1 > 0 外か辺の上なら d1 <= 0
+                    let d1 = v1.dot(normal);
+                    //v2が内側なら d2 > 0 外か辺の上なら d2 <= 0
+                    let d2 = v2.dot(normal);
+                    println!("{}, {}", d1, d2);
+
+                    if d1 > 0.0 {
+                        //v1 内側
+                        if d2 > 0.0 {
+                            //v2 内側
+                            cliped_polygon.push(v2);
+                        } else {
+                            //v2 外側
+                            let point = intersect(v1, v2, d1, d2);
+                            cliped_polygon.push(point);
+                        }
+                    } else if d2 > 0.0 {
+                        //v1 外側
+                        //v2 内側
+                        let point = intersect(v1, v2, d1, d2);
+                        cliped_polygon.push(v2);
+                        cliped_polygon.push(point);
+                    }
+                }
+
+                polygon = cliped_polygon;
+            }
+
+            if !polygon.is_empty() {
+                //この三角形からできた頂点で作られる三角形は全てpolygon[0]を含む
+                let v1 = polygon[0];
+                for idx in 1..(polygon.len() - 1) {
+                    let v2 = polygon[idx];
+                    let v3 = polygon[idx + 1];
+                    let tri = Triangle::new(v1, v2, v3);
+                    triangles.push(tri);
+                }
+            }
+        }
+
+        self.obj.triangles = triangles;
     }
 
     pub fn generate_image(&mut self, output_path: impl Into<Cow<'static , str>>) -> Result<()> {
