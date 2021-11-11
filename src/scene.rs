@@ -83,10 +83,10 @@ impl Scene {
                     let v2 = polygon[(index + 1) % polygon.len()];
 
                     //v1が内側なら d1 > 0 外か辺の上なら d1 <= 0
-                    let d1 = v1.dot(normal);
+                    let d1 = v2.dot(normal);
                     //v2が内側なら d2 > 0 外か辺の上なら d2 <= 0
-                    let d2 = v2.dot(normal);
-                    println!("{}, {}", d1, d2);
+                    let d2 = v1.dot(normal);
+                    //println!("{}, {}", d1, d2);
 
                     if d1 > 0.0 {
                         //v1 内側

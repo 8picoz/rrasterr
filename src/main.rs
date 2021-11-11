@@ -28,10 +28,10 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
 
     let image = Image::new(512, 512);
 
-    let screen = Screen::new(2.0, 1000.0, 1.0, 1.0);
+    let screen = Screen::new(1.0, 100.0, 1.0, 1.0);
     let camera = Camera::new(
-        Vector3::new(0.0, 6.0, 10.0), 
-        Vector3::new(-0.2, 1.6, 0.0), 
+        Vector3::new(0.0, 1.5, 3.0), 
+        Vector3::new(0.0, 1.5, 0.0), 
         Vector3::new(0.0, 1.0, 0.0), 
         screen);
 
@@ -52,8 +52,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
     println!("projection convert");
     //クリッピング
     //Sutherland-Hodgman
-    //scene.as_mut().clipping();
-    //println!("clipping");
+    scene.as_mut().clipping();
+    println!("clipping");
     //Perspective Division
     //デバイス座標系
     scene.as_mut().perspective_division();
