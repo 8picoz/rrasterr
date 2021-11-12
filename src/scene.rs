@@ -12,8 +12,8 @@ use crate::image::Image;
 use crate::obj::Obj;
 use crate::screen::Screen;
 use crate::triangle::Triangle;
-use crate::world_converter::projection_matrix;
-use crate::world_converter::view_matrix;
+use crate::coordinate_helper::projection_matrix;
+use crate::coordinate_helper::view_matrix;
 
 type Vec4f = Vector4<f32>;
 

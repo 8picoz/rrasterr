@@ -30,8 +30,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
 
     let screen = Screen::new(1.0, 100.0, 1.0, 1.0);
     let camera = Camera::new(
-        Vector3::new(0.0, 1.5, 1.5), 
-        Vector3::new(0.0, 1.5, 0.0), 
+        Vector3::new(-0.5, 1.5, 2.0), 
+        Vector3::new(-0.5, 1.5, 0.0), 
         Vector3::new(0.0, 1.0, 0.0), 
         screen);
 
