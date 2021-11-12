@@ -14,13 +14,14 @@ pub struct Image {
     width: usize,
     height: usize,
     canvas: Vec<Vector3<f32>>,
+    depth_canvas: Vec<f32>,
 }
 
 impl Image {
     pub fn new(width: usize, height: usize) -> Self {
         let canvas_array_size = 3 * width * height;
 
-        Self { width, height, canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize] }
+        Self { width, height, canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize], depth_canvas: vec![0.0; canvas_array_size as usize] }
     }
 
     pub fn get_size(&self) -> (usize, usize) {

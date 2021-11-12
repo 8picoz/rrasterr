@@ -3,8 +3,6 @@ use cgmath::Matrix4;
 use crate::camera::Camera;
 use crate::screen::Screen;
 
-//TODO: なんかもっと良いファイル名
-
 type Mat4f = Matrix4<f32>;
 
 pub fn view_matrix(camera: &Camera) -> Mat4f {
