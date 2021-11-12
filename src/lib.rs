@@ -5,3 +5,4 @@ pub mod camera;
 pub mod screen;
 pub mod coordinate_helper;
 pub mod scene;
+pub mod light;
