@@ -21,7 +21,7 @@ impl Image {
     pub fn new(width: usize, height: usize) -> Self {
         let canvas_array_size = 3 * width * height;
 
-        Self { width, height, canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize], depth_canvas: vec![0.0; canvas_array_size as usize] }
+        Self { width, height, canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize], depth_canvas: vec![0.0; canvas_array_size as usize ] }
     }
 
     pub fn get_size(&self) -> (usize, usize) {
@@ -41,7 +41,7 @@ impl Image {
     }
 
     //Bresenham's line algorithm
-    pub fn raster_line(&mut self, p1: Vector2<f32>, p2: Vector2<f32>, kd: Vector3<f32>) {
+    pub fn set_line(&mut self, p1: Vector2<f32>, p2: Vector2<f32>, kd: Vector3<f32>) {
         let (mut x1, mut y1) = (p1.x as isize, p1.y as isize);
         let (mut x2, mut y2) = (p2.x as isize, p2.y as isize);
         let mut trans = false;
