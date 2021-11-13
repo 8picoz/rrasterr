@@ -6,3 +6,4 @@ pub mod screen;
 pub mod coordinate_helper;
 pub mod scene;
 pub mod light;
+pub mod bounding_box;
