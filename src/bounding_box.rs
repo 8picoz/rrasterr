@@ -12,7 +12,7 @@ impl BoundingBox {
         Self { max, min }
     }
 
-    pub fn calc_from_tree_vertex(vertexes: Vec<Vec2f>) -> Self {
+    pub fn calc_from_vertexes(vertexes: Vec<Vec2f>) -> Self {
         let x = vertexes.iter().map(|item| item.x);
         let y = vertexes.iter().map(|item| item.y);
 
