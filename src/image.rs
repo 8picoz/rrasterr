@@ -10,10 +10,15 @@ use cgmath::Vector2;
 use cgmath::Vector3;
 use num::clamp;
 
+use crate::bounding_box::BoundingBox;
+
+type Vec2f = Vector2<f32>;
+type Vec3f = Vector3<f32>;
+
 pub struct Image {
     width: usize,
     height: usize,
-    canvas: Vec<Vector3<f32>>,
+    canvas: Vec<Vec3f>,
     depth_canvas: Vec<f32>,
 }
 
@@ -21,17 +26,24 @@ impl Image {
     pub fn new(width: usize, height: usize) -> Self {
         let canvas_array_size = 3 * width * height;
 
-        Self { width, height, canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize], depth_canvas: vec![0.0; canvas_array_size as usize ] }
+        Self {
+            width,
+            height,
+            canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize],
+            depth_canvas: vec![0.0; canvas_array_size as usize],
+        }
     }
 
     pub fn get_size(&self) -> (usize, usize) {
         (self.width, self.height)
     }
 
-    pub fn set_pixel(&mut self, x: isize, y: isize, kd: Vector3<f32>) {
+    pub fn set_pixel(&mut self, x: isize, y: isize, kd: Vec3f) {
         //たまに物凄く大きな値がくるのを弾いている
         //がそもそもそんなに大きな値が来るのが間違っているのでは？
-        if x < 0 || self.width as isize <= x || y < 0 || self.height as isize <= y { return; }
+        if x < 0 || self.width as isize <= x || y < 0 || self.height as isize <= y {
+            return;
+        }
 
         let x = x as usize;
         let y = y as usize;
@@ -41,7 +53,7 @@ impl Image {
     }
 
     //Bresenham's line algorithm
-    pub fn set_line(&mut self, p1: Vector2<f32>, p2: Vector2<f32>, kd: Vector3<f32>) {
+    pub fn raster_line(&mut self, p1: Vec2f, p2: Vec2f, kd: Vec3f) {
         let (mut x1, mut y1) = (p1.x as isize, p1.y as isize);
         let (mut x2, mut y2) = (p2.x as isize, p2.y as isize);
         let mut trans = false;
@@ -65,7 +77,7 @@ impl Image {
         let dy = y2 - y1;
         let delta = dy * 2;
         let yd = if dy > 0 { 1 } else { -1 };
-        
+
         let mut error = 0;
         let mut y = y1;
 
@@ -81,6 +93,10 @@ impl Image {
         }
     }
 
+    pub fn raster_triangle(&mut self, p1: Vec2f, p2: Vec2f, p3: Vec2f) {
+        
+    }
+
     pub fn write_ppm(&self, output_name: impl Into<Cow<'static, str>>) -> io::Result<()> {
         let output_name: &str = &output_name.into();
 
@@ -94,7 +110,7 @@ impl Image {
         for j in 0..self.height {
             for i in 0..self.width {
                 let index = i + self.width * j;
-                let rgb = self.canvas[index].map(|kd| { clamp(kd * 255.0, 0.0, 255.0) });
+                let rgb = self.canvas[index].map(|kd| clamp(kd * 255.0, 0.0, 255.0));
 
                 writer.write_all(format!("{} {} {}\r\n", rgb.x, rgb.y, rgb.z).as_bytes())?;
             }
