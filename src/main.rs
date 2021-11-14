@@ -5,23 +5,48 @@ use clap::{Arg, App};
 use rrasterr::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
 
 fn main() {
+    let file_path_flag_name = "file_path";
+    let vertex_flag_name = "vertex";
+    let line_flag_name = "line";
+    let rasterize_flag_name = "rasterize";
+
     let matched = App::new("rrasterr")
         .version("0.1")
         .author("tata <8picoz@tata.pw>")
         .about("rasterizer")
-        .arg(Arg::with_name("file_path")
+        .arg(Arg::with_name(file_path_flag_name)
             .short("f")
-            .long("file_path")
-            .value_name("file_path")
+            .long(file_path_flag_name)
+            .value_name(file_path_flag_name)
             .takes_value(true)
             .required(true)
         )
+        .arg(Arg::with_name(vertex_flag_name)
+            .short("v")
+            .long(vertex_flag_name)
+            .help("rendering vertex")
+        )
+        .arg(Arg::with_name(line_flag_name)
+            .short("l")
+            .long(line_flag_name)
+            .help("rendering line")
+        )
+        .arg(Arg::with_name(rasterize_flag_name)
+            .short("r")
+            .long(rasterize_flag_name)
+            .help("rendering with rasterization")
+        )
         .get_matches();
 
-    rasterize(matched.value_of("file_path").unwrap());
+    rasterize(
+    matched.value_of(file_path_flag_name).unwrap(), 
+    matched.is_present(vertex_flag_name), 
+    matched.is_present(line_flag_name),
+    matched.is_present(rasterize_flag_name)
+    );
 }
 
-fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
+fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render_line: bool, render_raster: bool) {
 
     //セットアップ
     let file_path = file_path.into();
@@ -59,7 +84,19 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>) {
     scene.as_mut().perspective_division();
     println!("perspective division");
 
+    //レンダリング
+    if render_vertex {
+        scene.render_vertex();
+    }
+    if render_line {
+        scene.render_line();
+    }
+    if render_raster {
+        scene.rasterize();
+    }
+    println!("rendering");
+    
     //画像保存
-    scene.generate_image_pixel("./output.ppm").expect("failed output image");
+    scene.generate_image("./output.ppm").expect("failed to generate image");
     println!("generate image");
 }

@@ -126,7 +126,11 @@ impl Scene {
         self.obj.triangles = triangles;
     }
 
-    pub fn generate_image_rasterize(&mut self, output_path: impl Into<Cow<'static, str>>) -> Result<()> {
+    fn viewport_convert(vertex: Vector4<f32>, screen: &Screen) -> Vec2f{
+        Vector2::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
+    }
+
+    pub fn rasterize(&mut self) {
 
         //エッジ関数(CCW)
         //https://dl.acm.org/doi/10.1145/378456.378457
@@ -194,14 +198,10 @@ impl Scene {
                 }
             }
         }
-
-        self.image.write_ppm(output_path.into())?;
-
-        Ok(())
     }
 
     //wire frame
-    pub fn generate_image_line(&mut self, output_path: impl Into<Cow<'static , str>>) -> Result<()> {
+    pub fn render_line(&mut self) {
         for tri in &self.obj.triangles {
             let pixel_0 = Scene::viewport_convert(tri.x, &self.camera.screen);
             let pixel_1 = Scene::viewport_convert(tri.y, &self.camera.screen);
@@ -217,13 +217,9 @@ impl Scene {
             self.image.raster_line(pixel_1, pixel_2, Vector3::from_value(1.0));
             self.image.raster_line(pixel_2, pixel_0, Vector3::from_value(1.0));
         }
-
-        self.image.write_ppm(output_path.into())?;
-
-        Ok(())
     }
 
-    pub fn generate_image_pixel(&mut self, output_path: impl Into<Cow<'static, str>>) -> Result<()> {
+    pub fn render_vertex(&mut self) {
         for tri in &self.obj.triangles {
             let pixel_0 = Scene::viewport_convert(tri.x, &self.camera.screen);
             let pixel_1 = Scene::viewport_convert(tri.y, &self.camera.screen);
@@ -239,14 +235,10 @@ impl Scene {
             self.image.set_pixel(pixel_1.x as isize, pixel_1.y as isize, Vector3::from_value(1.0));
             self.image.set_pixel(pixel_2.x as isize, pixel_2.y as isize, Vector3::from_value(1.0));
         }
-
-        self.image.write_ppm(output_path.into())?;
-
-        Ok(())
     }
 
-    fn viewport_convert(vertex: Vector4<f32>, screen: &Screen) -> Vec2f{
-        Vector2::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
+    pub fn generate_image(&self, output_path: impl Into<Cow<'static , str>>) -> Result<()> {
+        self.image.write_ppm(output_path.into())
     }
 }
 
