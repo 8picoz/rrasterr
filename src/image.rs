@@ -10,8 +10,6 @@ use cgmath::Vector2;
 use cgmath::Vector3;
 use num::clamp;
 
-use crate::bounding_box::BoundingBox;
-
 type Vec2f = Vector2<f32>;
 type Vec3f = Vector3<f32>;
 
@@ -19,18 +17,18 @@ pub struct Image {
     width: usize,
     height: usize,
     canvas: Vec<Vec3f>,
-    depth_canvas: Vec<f32>,
+    pub depth_canvas: Vec<f32>,
 }
 
 impl Image {
     pub fn new(width: usize, height: usize) -> Self {
-        let canvas_array_size = 3 * width * height;
+        let canvas_array_size = width * height;
 
         Self {
             width,
             height,
             canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize],
-            depth_canvas: vec![0.0; canvas_array_size as usize],
+            depth_canvas: vec![2.0; canvas_array_size as usize],
         }
     }
 
@@ -91,10 +89,6 @@ impl Image {
                 error -= dx * 2;
             }
         }
-    }
-
-    pub fn raster_triangle(&mut self, p1: Vec2f, p2: Vec2f, p3: Vec2f) {
-        
     }
 
     pub fn write_ppm(&self, output_name: impl Into<Cow<'static, str>>) -> io::Result<()> {
