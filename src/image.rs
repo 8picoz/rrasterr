@@ -73,7 +73,7 @@ impl Image {
         }
         let dx = x2 - x1;
         let dy = y2 - y1;
-        let delta = dy * 2;
+        let delta = dy.abs() * 2;
         let yd = if dy > 0 { 1 } else { -1 };
 
         let mut error = 0;

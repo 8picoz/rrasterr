@@ -131,7 +131,6 @@ impl Scene {
     }
 
     pub fn rasterize(&mut self) {
-
         //エッジ関数(CCW)
         //https://dl.acm.org/doi/10.1145/378456.378457
         let edge_func = |a: Vec2f, b: Vec2f, c: Vec2f| {

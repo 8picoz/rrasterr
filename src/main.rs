@@ -53,10 +53,11 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
 
     let image = Image::new(512, 512);
 
-    let screen = Screen::new(1.0, 100.0, 1.0, 1.0);
+    let screen = Screen::new(2.0, 1000.0, 0.5, -0.5, 0.5, -0.5);
     let camera = Camera::new(
-        Vector3::new(-0.5, 1.5, 5.0), 
-        Vector3::new(-0.5, 1.5, 0.0), 
+        //マイナス方向に進めると上方向にカメラが移動するということは
+        Vector3::new(0.0, 2.0, 10.0), 
+        Vector3::new(0.0, 2.0, 0.0), 
         Vector3::new(0.0, 1.0, 0.0), 
         screen);
 
@@ -69,19 +70,19 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
 
     //ビュー変換
     //カメラ座標系
-    scene.as_mut().view_convert();
+    scene.view_convert();
     println!("view convert");
     //投影変換
     //クリップ座標系
-    scene.as_mut().projection_convert();
+    scene.projection_convert();
     println!("projection convert");
     //クリッピング
     //Sutherland-Hodgman
-    scene.as_mut().clipping();
+    scene.clipping();
     println!("clipping");
     //Perspective Division
     //デバイス座標系
-    scene.as_mut().perspective_division();
+    scene.perspective_division();
     println!("perspective division");
 
     //レンダリング

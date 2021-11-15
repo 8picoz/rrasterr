@@ -27,7 +27,7 @@ pub fn projection_matrix(screen: &Screen) -> Mat4f {
     Matrix4::new(
         (2.0 * screen.n) / screen.w, 0.0, 0.0, 0.0,
         0.0, (2.0 * screen.n) / screen.h, 0.0, 0.0,
-        0.0, 0.0, - ((screen.f + screen.n) / (screen.f - screen.n)), -1.0,
+        (screen.right + screen.left) / (screen.right - screen.left), (screen.top + screen.bottom) / (screen.top - screen.bottom), - ((screen.f + screen.n) / (screen.f - screen.n)), -1.0,
         0.0, 0.0, - ((2.0 * screen.f * screen.n) / (screen.f - screen.n)), 0.0
     )
 }

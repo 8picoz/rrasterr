@@ -22,23 +22,23 @@ impl Obj {
             )
             .expect("Failed to obj load file");
 
-        println!("Number of models          = {}", models.len());
+        //println!("Number of models          = {}", models.len());
     
         let mut triangles = vec![];
-        for (i, m) in models.iter().enumerate() {
+        for (_i, m) in models.iter().enumerate() {
             let mesh = &m.mesh;
             
             let face_count = mesh.indices.len() / 3;
 
-            println!("model[{}].face_count       = {}", i, face_count);
-            println!("position[{}].positions     = {}", i, mesh.positions.len() / 3);
+            //println!("model[{}].face_count       = {}", _i, face_count);
+            //println!("position[{}].positions     = {}", _i, mesh.positions.len() / 3);
 
             let mut next_face = 0;
             for _face in 0..face_count {
                 let end = next_face + 3;
 
                 let face_indices = &mesh.indices[next_face..end];
-                println!("face[{}].indices          = {:?}", _face, face_indices);
+                //println!("face[{}].indices          = {:?}", _face, face_indices);
 
                 triangles.push(Triangle::new(
                     Vector4::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize], 1.0),
