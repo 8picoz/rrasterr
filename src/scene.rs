@@ -130,7 +130,7 @@ impl Scene {
         Vector2::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
     }
 
-    pub fn rasterize(&mut self) {
+    pub fn rasterize(&mut self, cullbackface: bool) {
         //エッジ関数(CCW)
         //https://dl.acm.org/doi/10.1145/378456.378457
         let edge_func = |a: Vec2f, b: Vec2f, c: Vec2f| {
@@ -141,25 +141,25 @@ impl Scene {
         };
 
         for tri in &self.obj.triangles {
-            let (p_0_ndc, p_1_ndc, p_2_ndc) = (tri.x, tri.y, tri.z);
+            let (p0_ndc, p1_ndc, p2_ndc) = (tri.x, tri.y, tri.z);
 
-            let pixel_0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel_1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel_2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 
-            let pixel_0 = Vector2::new(pixel_0.x * w as f32, pixel_0.y * h as f32);
-            let pixel_1 = Vector2::new(pixel_1.x * w as f32, pixel_1.y * h as f32);
-            let pixel_2 = Vector2::new(pixel_2.x * w as f32, pixel_2.y * h as f32);
+            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
             //三角形が逆回りでないかどうか判定
-            let denom = edge_func(pixel_0, pixel_1, pixel_2);
-            if denom < 0.0 {
+            let denom = edge_func(pixel0, pixel1, pixel2);
+            if denom < 0.0 && cullbackface {
                 continue;
             }
 
-            let bb = BoundingBox::calc_from_vertexes(vec![pixel_0, pixel_1, pixel_2]);
+            let bb = BoundingBox::calc_from_vertexes(vec![pixel0, pixel1, pixel2]);
 
             let (x_min, x_max) = (bb.min.x as usize, bb.max.x as usize);
             let (y_min, y_max) = (bb.min.y as usize, bb.max.y as usize);
@@ -172,20 +172,23 @@ impl Scene {
                     let p = Vec2f::new(x as f32, y as f32) + Vec2f::from_value(0.5);
 
                     //エッジ
-                    let b0 = edge_func(pixel_1, pixel_2, p);
-                    let b1 = edge_func(pixel_2, pixel_0, p);
-                    let b2 = edge_func(pixel_0, pixel_1, p);
+                    let b0 = edge_func(pixel1, pixel2, p);
+                    let b1 = edge_func(pixel2, pixel0, p);
+                    let b2 = edge_func(pixel0, pixel1, p);
 
                     //Winding Order is CCW
-                    // b1 < 0.0 && b2 < 0.0 && b3 < 0.0 とすれば逆回りの三角形の描画もできる
-                    if b0 > 0.0 && b1 > 0.0 && b2 > 0.0 {
+                    let inside = b0 > 0.0 && b1 > 0.0 && b2 > 0.0;
+                    // b0 < 0.0 && b1 < 0.0 && b2 < 0.0 とすれば逆回りの三角形の描画もできる
+                    let inside = if cullbackface { inside && b0 < 0.0 && b1 < 0.0 && b2 < 0.0 } else { inside };
+
+                    if inside {
                         //?
                         let b0 = b0 / denom;
                         let b1 = b1 / denom;
                         let b2 = b2 / denom;
 
-                        //pのデバイス座標系への変換？
-                        let p_ndc = b0 * p_0_ndc + b1 * p_1_ndc + b2 * p_2_ndc;
+                        //pのデバイス座標系への変換？ 
+                        let p_ndc = b0 * p0_ndc + b1 * p1_ndc + b2 * p2_ndc;
 
                         if self.image.depth_canvas[w * y + x] < p_ndc.z {
                             continue;
@@ -202,37 +205,37 @@ impl Scene {
     //wire frame
     pub fn render_line(&mut self) {
         for tri in &self.obj.triangles {
-            let pixel_0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel_1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel_2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 
-            let pixel_0 = Vector2::new(pixel_0.x * w as f32, pixel_0.y * h as f32);
-            let pixel_1 = Vector2::new(pixel_1.x * w as f32, pixel_1.y * h as f32);
-            let pixel_2 = Vector2::new(pixel_2.x * w as f32, pixel_2.y * h as f32);
+            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
-            self.image.raster_line(pixel_0, pixel_1, Vector3::from_value(1.0));
-            self.image.raster_line(pixel_1, pixel_2, Vector3::from_value(1.0));
-            self.image.raster_line(pixel_2, pixel_0, Vector3::from_value(1.0));
+            self.image.raster_line(pixel0, pixel1, Vector3::from_value(1.0));
+            self.image.raster_line(pixel1, pixel2, Vector3::from_value(1.0));
+            self.image.raster_line(pixel2, pixel0, Vector3::from_value(1.0));
         }
     }
 
     pub fn render_vertex(&mut self) {
         for tri in &self.obj.triangles {
-            let pixel_0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel_1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel_2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 
-            let pixel_0 = Vector2::new(pixel_0.x * w as f32, pixel_0.y * h as f32);
-            let pixel_1 = Vector2::new(pixel_1.x * w as f32, pixel_1.y * h as f32);
-            let pixel_2 = Vector2::new(pixel_2.x * w as f32, pixel_2.y * h as f32);
+            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
-            self.image.set_pixel(pixel_0.x as isize, pixel_0.y as isize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel_1.x as isize, pixel_1.y as isize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel_2.x as isize, pixel_2.y as isize, Vector3::from_value(1.0));
+            self.image.set_pixel(pixel0.x as isize, pixel0.y as isize, Vector3::from_value(1.0));
+            self.image.set_pixel(pixel1.x as isize, pixel1.y as isize, Vector3::from_value(1.0));
+            self.image.set_pixel(pixel2.x as isize, pixel2.y as isize, Vector3::from_value(1.0));
         }
     }
 

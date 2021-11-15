@@ -93,7 +93,7 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
         scene.render_line();
     }
     if render_raster {
-        scene.rasterize();
+        scene.rasterize(false);
     }
     println!("rendering");
     
