@@ -91,17 +91,18 @@ impl Image {
 
     pub fn write_ppm(&self, output_name: impl Into<Cow<'static, str>>) -> io::Result<()> {
         let output_name: &str = &output_name.into();
-
+        
         let f = File::create(output_name)?;
         let mut writer = BufWriter::new(f);
-
+        
         writer.write_all(b"P3\r\n")?;
         writer.write_all(format!("{} {}\r\n", self.width, self.height).as_bytes())?;
         writer.write_all(b"255\r\n")?;
-
+        
         for j in 0..self.height {
             for i in 0..self.width {
-                let index = self.width * j + i;
+                //通常の画像は左上が(0, 0)だがこのレンダラのキャンバスの作り方的には左下が(0, 0)出ないといけないので上下を反転
+                let index = self.width * ((self.height - 1) - j) + i;
                 let rgb = self.canvas[index].map(|kd| clamp(kd * 255.0, 0.0, 255.0));
 
                 writer.write_all(format!("{} {} {}\r\n", rgb.x, rgb.y, rgb.z).as_bytes())?;

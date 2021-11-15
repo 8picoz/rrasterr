@@ -19,9 +19,9 @@ impl Camera {
         //左手座標系
         let basis_z = (position - endpoint).normalize();
         let basis_x = up_direction.cross(basis_z);
-        let basis_y = basis_x.cross(basis_z);
+        let basis_y = basis_z.cross(basis_x);
 
-        //println!("{:?}, {:?}, {:?}", basis_x, basis_y, basis_z);
+        println!("{:?}, {:?}, {:?}", basis_x, basis_y, basis_z);
 
         Self { position, endpoint, up_direction, screen, basis_x, basis_y, basis_z }
     }
