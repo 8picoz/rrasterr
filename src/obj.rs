@@ -1,18 +1,18 @@
 use std::borrow::Cow;
 
 use cgmath::Matrix4;
-use cgmath::Vector3;
-use cgmath::Vector4;
 
+use crate::Vec3f;
+use crate::Vec4f;
 use crate::triangle::Triangle;
 
 pub struct Obj {
-    pub center_position: Vector3<f32>,
+    pub center_position: Vec3f,
     pub triangles: Vec<Triangle>,
 }
 
 impl Obj {
-    pub fn new<'a>(file_path: impl Into<Cow<'a, str>>, center_position: Vector3<f32>) -> Self {
+    pub fn new<'a>(file_path: impl Into<Cow<'a, str>>, center_position: Vec3f) -> Self {
         let file_path: &str = &file_path.into();
         
         let (models, _) = 
@@ -41,9 +41,9 @@ impl Obj {
                 //println!("face[{}].indices          = {:?}", _face, face_indices);
 
                 triangles.push(Triangle::new(
-                    Vector4::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize], 1.0),
-                    Vector4::new(mesh.positions[(3 * face_indices[1]) as usize], mesh.positions[(3 * face_indices[1] + 1) as usize], mesh.positions[(3 * face_indices[1] + 2) as usize], 1.0),
-                    Vector4::new(mesh.positions[(3 * face_indices[2]) as usize], mesh.positions[(3 * face_indices[2] + 1) as usize], mesh.positions[(3 * face_indices[2] + 2) as usize], 1.0),
+                    Vec4f::new(mesh.positions[(3 * face_indices[0]) as usize], mesh.positions[(3 * face_indices[0] + 1) as usize], mesh.positions[(3 * face_indices[0] + 2) as usize], 1.0),
+                    Vec4f::new(mesh.positions[(3 * face_indices[1]) as usize], mesh.positions[(3 * face_indices[1] + 1) as usize], mesh.positions[(3 * face_indices[1] + 2) as usize], 1.0),
+                    Vec4f::new(mesh.positions[(3 * face_indices[2]) as usize], mesh.positions[(3 * face_indices[2] + 1) as usize], mesh.positions[(3 * face_indices[2] + 2) as usize], 1.0),
                 ));
             
                 next_face = end;

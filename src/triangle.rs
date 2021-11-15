@@ -1,8 +1,6 @@
 use std::ops::Index;
 
-use cgmath::Vector4;
-
-type Vec4f = Vector4<f32>;
+use crate::Vec4f;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Triangle {

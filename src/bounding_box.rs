@@ -1,6 +1,4 @@
-use cgmath::Vector2;
-
-type Vec2f = Vector2<f32>;
+use crate::Vec2f;
 
 pub struct BoundingBox {
     pub max: Vec2f,

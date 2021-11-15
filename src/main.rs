@@ -1,8 +1,10 @@
 use std::borrow::Cow;
 
-use cgmath::{Array, Vector3};
+use cgmath::Vector3;
 use clap::{Arg, App};
 use rrasterr::{camera::Camera, image::Image, obj::Obj, scene::Scene, screen::Screen};
+
+type Vec3f = Vector3<f32>;
 
 fn main() {
     let file_path_flag_name = "file_path";
@@ -56,12 +58,12 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
     let screen = Screen::new(2.0, 1000.0, 0.5, -0.5, 0.5, -0.5);
     let camera = Camera::new(
         //マイナス方向に進めると上方向にカメラが移動するということは
-        Vector3::new(0.0, 5.0, 8.0), 
-        Vector3::new(0.0, 1.0, 0.0), 
-        Vector3::new(0.0, 1.0, 0.0), 
+        Vec3f::new(0.0, 5.0, 8.0), 
+        Vec3f::new(0.0, 1.0, 0.0), 
+        Vec3f::new(0.0, 1.0, 0.0), 
         screen);
 
-    let target_obj = Obj::new(file_path, Vector3::from_value(0.0));
+    let target_obj = Obj::new(file_path, Vec3f::new(0.0, 0.0, 0.0));
     
     let mut scene = Scene::new(image, camera, target_obj);
 

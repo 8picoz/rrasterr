@@ -3,10 +3,10 @@ use std::io::Result;
 
 use cgmath::Array;
 use cgmath::InnerSpace;
-use cgmath::Vector2;
-use cgmath::Vector3;
-use cgmath::Vector4;
 
+use crate::Vec2f;
+use crate::Vec3f;
+use crate::Vec4f;
 use crate::bounding_box::BoundingBox;
 use crate::camera::Camera;
 use crate::image::Image;
@@ -15,9 +15,6 @@ use crate::screen::Screen;
 use crate::triangle::Triangle;
 use crate::coordinate_helper::projection_matrix;
 use crate::coordinate_helper::view_matrix;
-
-type Vec4f = Vector4<f32>;
-type Vec2f = Vector2<f32>;
 
 //coordinate_state的なenumを持たせて現在の自分の状態を確認できるようにする
 pub struct Scene {
@@ -126,8 +123,8 @@ impl Scene {
         self.obj.triangles = triangles;
     }
 
-    fn viewport_convert(vertex: Vector4<f32>, screen: &Screen) -> Vec2f{
-        Vector2::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
+    fn viewport_convert(vertex: Vec4f, screen: &Screen) -> Vec2f {
+        Vec2f::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
     }
 
     pub fn rasterize(&mut self, cullbackface: bool) {
@@ -149,9 +146,9 @@ impl Scene {
 
             let (w, h) = self.image.get_size();
 
-            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
-            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
-            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
+            let pixel0 = Vec2f::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vec2f::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vec2f::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
             //三角形が逆回りでないかどうか判定
             let denom = edge_func(pixel0, pixel1, pixel2);
@@ -195,7 +192,7 @@ impl Scene {
                         }
                         self.image.depth_canvas[w * y + x] = p_ndc.z;
                         //directional light未実装
-                        self.image.set_pixel(x as isize, y as isize, Vector3::<f32>::from_value(1.0));
+                        self.image.set_pixel(x as isize, y as isize, Vec3f::from_value(1.0));
                     }
                 }
             }
@@ -211,13 +208,13 @@ impl Scene {
 
             let (w, h) = self.image.get_size();
 
-            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
-            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
-            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
+            let pixel0 = Vec2f::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vec2f::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vec2f::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
-            self.image.raster_line(pixel0, pixel1, Vector3::from_value(1.0));
-            self.image.raster_line(pixel1, pixel2, Vector3::from_value(1.0));
-            self.image.raster_line(pixel2, pixel0, Vector3::from_value(1.0));
+            self.image.raster_line(pixel0, pixel1, Vec3f::from_value(1.0));
+            self.image.raster_line(pixel1, pixel2, Vec3f::from_value(1.0));
+            self.image.raster_line(pixel2, pixel0, Vec3f::from_value(1.0));
         }
     }
 
@@ -229,13 +226,13 @@ impl Scene {
 
             let (w, h) = self.image.get_size();
 
-            let pixel0 = Vector2::new(pixel0.x * w as f32, pixel0.y * h as f32);
-            let pixel1 = Vector2::new(pixel1.x * w as f32, pixel1.y * h as f32);
-            let pixel2 = Vector2::new(pixel2.x * w as f32, pixel2.y * h as f32);
+            let pixel0 = Vec2f::new(pixel0.x * w as f32, pixel0.y * h as f32);
+            let pixel1 = Vec2f::new(pixel1.x * w as f32, pixel1.y * h as f32);
+            let pixel2 = Vec2f::new(pixel2.x * w as f32, pixel2.y * h as f32);
 
-            self.image.set_pixel(pixel0.x as isize, pixel0.y as isize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel1.x as isize, pixel1.y as isize, Vector3::from_value(1.0));
-            self.image.set_pixel(pixel2.x as isize, pixel2.y as isize, Vector3::from_value(1.0));
+            self.image.set_pixel(pixel0.x as isize, pixel0.y as isize, Vec3f::from_value(1.0));
+            self.image.set_pixel(pixel1.x as isize, pixel1.y as isize, Vec3f::from_value(1.0));
+            self.image.set_pixel(pixel2.x as isize, pixel2.y as isize, Vec3f::from_value(1.0));
         }
     }
 
