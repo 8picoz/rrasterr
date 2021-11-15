@@ -176,7 +176,7 @@ impl Scene {
                     //Winding Order is CCW
                     let inside = b0 > 0.0 && b1 > 0.0 && b2 > 0.0;
                     // b0 < 0.0 && b1 < 0.0 && b2 < 0.0 とすれば逆回りの三角形の描画もできる
-                    let inside = if cullbackface { inside && b0 < 0.0 && b1 < 0.0 && b2 < 0.0 } else { inside };
+                    let inside = if cullbackface { inside || b0 < 0.0 && b1 < 0.0 && b2 < 0.0 } else { inside };
 
                     if inside {
                         //?

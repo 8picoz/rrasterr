@@ -58,8 +58,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
     let screen = Screen::new(2.0, 1000.0, 0.5, -0.5, 0.5, -0.5);
     let camera = Camera::new(
         //マイナス方向に進めると上方向にカメラが移動するということは
-        Vec3f::new(0.0, 1.0, 10.0), 
-        Vec3f::new(0.0, 1.0, 0.0), 
+        Vec3f::new(0.0, 8.0, 10.0), 
+        Vec3f::new(0.0, 3.0, 0.0), 
         Vec3f::new(0.0, 1.0, 0.0), 
         screen);
 
@@ -95,7 +95,7 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
         scene.render_line();
     }
     if render_raster {
-        scene.rasterize(false);
+        scene.rasterize(true);
     }
     println!("rendering");
     
