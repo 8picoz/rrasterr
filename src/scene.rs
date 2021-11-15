@@ -67,7 +67,7 @@ impl Scene {
         //辺とクリップ面の交差点探索
         let intersect = |v1: Vec4f, v2: Vec4f, d1: f32, d2: f32| -> Vec4f {
             let a = d1 / (d1 - d2);
-            ((1.0 - a) * v1 + a * v2).normalize()
+            (1.0 - a) * v1 + a * v2
         };
 
         //クリッピング後のtriangles
@@ -103,8 +103,8 @@ impl Scene {
                         //v1 外側
                         //v2 内側
                         let point = intersect(v1, v2, d1, d2);
-                        cliped_polygon.push(v2);
                         cliped_polygon.push(point);
+                        cliped_polygon.push(v2);
                     }
                 }
 
@@ -165,8 +165,8 @@ impl Scene {
             let (y_min, y_max) = (bb.min.y as usize, bb.max.y as usize);
 
             //BBを使ってピクセルを限定
-            for x in x_min..x_max {
-                for y in y_min..y_max {
+            for x in x_min..=x_max {
+                for y in y_min..=y_max {
                     //offsetを取らないとそのピクセルの左下部分から始まることになり
                     //p1, p2, p3と重なってしまう
                     let p = Vec2f::new(x as f32, y as f32) + Vec2f::from_value(0.5);

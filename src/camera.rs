@@ -18,9 +18,9 @@ pub struct Camera {
 impl Camera {
     pub fn new(position: Vec3f, endpoint: Vec3f, up_direction: Vec3f, screen: Screen) -> Self {
         //左手座標系
-        let basis_z = -(endpoint - position).normalize();
-        let basis_x = basis_z.cross(up_direction);
-        let basis_y = basis_z.cross(basis_x);
+        let basis_z = (position - endpoint).normalize();
+        let basis_x = up_direction.cross(basis_z);
+        let basis_y = basis_x.cross(basis_z);
 
         //println!("{:?}, {:?}, {:?}", basis_x, basis_y, basis_z);
 

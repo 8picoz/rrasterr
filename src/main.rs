@@ -56,8 +56,8 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
     let screen = Screen::new(2.0, 1000.0, 0.5, -0.5, 0.5, -0.5);
     let camera = Camera::new(
         //マイナス方向に進めると上方向にカメラが移動するということは
-        Vector3::new(0.0, 2.0, 10.0), 
-        Vector3::new(0.0, 2.0, 0.0), 
+        Vector3::new(0.0, 5.0, 8.0), 
+        Vector3::new(0.0, 1.0, 0.0), 
         Vector3::new(0.0, 1.0, 0.0), 
         screen);
 

@@ -28,7 +28,7 @@ impl Image {
             width,
             height,
             canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize],
-            depth_canvas: vec![2.0; canvas_array_size as usize],
+            depth_canvas: vec![f32::INFINITY; canvas_array_size as usize],
         }
     }
 
@@ -46,7 +46,7 @@ impl Image {
         let x = x as usize;
         let y = y as usize;
 
-        let target_pixel_index = x + self.width * y;
+        let target_pixel_index = self.width * y + x;
         self.canvas[target_pixel_index] = kd;
     }
 
@@ -103,7 +103,7 @@ impl Image {
 
         for j in 0..self.height {
             for i in 0..self.width {
-                let index = i + self.width * j;
+                let index = self.width * j + i;
                 let rgb = self.canvas[index].map(|kd| clamp(kd * 255.0, 0.0, 255.0));
 
                 writer.write_all(format!("{} {} {}\r\n", rgb.x, rgb.y, rgb.z).as_bytes())?;
