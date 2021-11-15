@@ -6,7 +6,6 @@ use std::io::Write;
 use std::isize;
 
 use cgmath::Array;
-use cgmath::InnerSpace;
 use num::clamp;
 
 use crate::Vec2f;
