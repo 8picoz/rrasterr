@@ -6,6 +6,7 @@ use std::io::Write;
 use std::isize;
 
 use cgmath::Array;
+use cgmath::InnerSpace;
 use num::clamp;
 
 use crate::Vec2f;
@@ -105,7 +106,7 @@ impl Image {
                 let index = self.width * ((self.height - 1) - j) + i;
                 let rgb = self.canvas[index].map(|kd| clamp(kd * 255.0, 0.0, 255.0));
 
-                writer.write_all(format!("{} {} {}\r\n", rgb.x, rgb.y, rgb.z).as_bytes())?;
+                writer.write_all(format!("{} {} {}\r\n", rgb.x as usize, rgb.y as usize, rgb.z as usize).as_bytes())?;
             }
         }
 

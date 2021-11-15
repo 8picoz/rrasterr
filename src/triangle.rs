@@ -1,12 +1,12 @@
 use std::ops::Index;
 
-use crate::Vec4f;
+use crate::vertex::Vertex;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Triangle {
-    pub x: Vec4f,
-    pub y: Vec4f,
-    pub z: Vec4f,
+    pub x: Vertex,
+    pub y: Vertex,
+    pub z: Vertex,
 }
 
 pub struct TriangleIter<'a> {
@@ -15,7 +15,7 @@ pub struct TriangleIter<'a> {
 }
 
 impl Triangle {
-    pub fn new(x: Vec4f, y: Vec4f, z: Vec4f) -> Self {
+    pub fn new(x: Vertex, y: Vertex, z: Vertex) -> Self {
         Self { x, y, z }
     }
 
@@ -25,7 +25,7 @@ impl Triangle {
 }
 
 impl<'a> Iterator for TriangleIter<'a> {
-    type Item = Vec4f;
+    type Item = Vertex;
     fn next(&mut self) -> Option<Self::Item> {
         if self.now == 0 {
             Some(self.triangle.x)
@@ -40,7 +40,7 @@ impl<'a> Iterator for TriangleIter<'a> {
 }
 
 impl Index<usize> for Triangle {
-    type Output = Vec4f;
+    type Output = Vertex;
 
     fn index(&self, idx: usize) -> &Self::Output {
         if idx == 0 {

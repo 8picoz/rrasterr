@@ -12,9 +12,11 @@ use crate::camera::Camera;
 use crate::image::Image;
 use crate::obj::Obj;
 use crate::screen::Screen;
+use crate::shader::fragment_shader::fragment_shader;
 use crate::triangle::Triangle;
 use crate::coordinate_helper::projection_matrix;
 use crate::coordinate_helper::view_matrix;
+use crate::vertex::Vertex;
 
 //coordinate_state的なenumを持たせて現在の自分の状態を確認できるようにする
 pub struct Scene {
@@ -43,9 +45,18 @@ impl Scene {
             |tri| 
                 Triangle::new(
                     //wはzとは逆方向に伸びたベクトル(?)
-                    tri.x / tri.x.w,
-                    tri.y / tri.y.w,
-                    tri.z / tri.z.w
+                    Vertex::new(
+                    tri.x.point / tri.x.point.w,
+                    tri.x.normal
+                    ),
+                    Vertex::new(
+                    tri.y.point / tri.y.point.w,
+                    tri.y.normal
+                    ),
+                    Vertex::new(
+                        tri.z.point / tri.z.point.w,
+                        tri.z.normal
+                    ),
                 )
         ).collect();
     }
@@ -62,9 +73,12 @@ impl Scene {
             ];
         
         //辺とクリップ面の交差点探索
-        let intersect = |v1: Vec4f, v2: Vec4f, d1: f32, d2: f32| -> Vec4f {
+        let intersect = |v1: Vertex, v2: Vertex, d1: f32, d2: f32| -> Vertex {
             let a = d1 / (d1 - d2);
-            (1.0 - a) * v1 + a * v2
+            Vertex::new(
+            (1.0 - a) * v1.point + a * v2.point,
+            (1.0 - a) * v1.normal + a * v2.normal,
+            )
         };
 
         //クリッピング後のtriangles
@@ -82,9 +96,9 @@ impl Scene {
                     let v2 = polygon[(index + 1) % polygon.len()];
 
                     //v1が内側なら d1 > 0 外か辺の上なら d1 <= 0
-                    let d1 = v1.dot(normal);
+                    let d1 = v1.point.dot(normal);
                     //v2が内側なら d2 > 0 外か辺の上なら d2 <= 0
-                    let d2 = v2.dot(normal);
+                    let d2 = v2.point.dot(normal);
 
                     if d1 > 0.0 {
                         //v1 内側
@@ -127,7 +141,7 @@ impl Scene {
         Vec2f::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
     }
 
-    pub fn rasterize(&mut self, cullbackface: bool) {
+    pub fn rasterize(&mut self, cull_backface: bool) {
         //エッジ関数(CCW)
         //https://dl.acm.org/doi/10.1145/378456.378457
         let edge_func = |a: Vec2f, b: Vec2f, c: Vec2f| {
@@ -138,11 +152,11 @@ impl Scene {
         };
 
         for tri in &self.obj.triangles {
-            let (p0_ndc, p1_ndc, p2_ndc) = (tri.x, tri.y, tri.z);
+            let (p0_ndc, p1_ndc, p2_ndc) = (tri.x.point, tri.y.point, tri.z.point);
 
-            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x.point, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y.point, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z.point, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 
@@ -152,7 +166,8 @@ impl Scene {
 
             //三角形が逆回りでないかどうか判定
             let denom = edge_func(pixel0, pixel1, pixel2);
-            if denom < 0.0 && cullbackface {
+            let is_back = denom < 0.0;
+            if is_back && cull_backface {
                 continue;
             }
 
@@ -176,7 +191,7 @@ impl Scene {
                     //Winding Order is CCW
                     let inside = b0 > 0.0 && b1 > 0.0 && b2 > 0.0;
                     // b0 < 0.0 && b1 < 0.0 && b2 < 0.0 とすれば逆回りの三角形の描画もできる
-                    let inside = if cullbackface { inside || b0 < 0.0 && b1 < 0.0 && b2 < 0.0 } else { inside };
+                    let inside = if cull_backface { inside || b0 < 0.0 && b1 < 0.0 && b2 < 0.0 } else { inside };
 
                     if inside {
                         //?
@@ -191,8 +206,10 @@ impl Scene {
                             continue;
                         }
                         self.image.depth_canvas[w * y + x] = p_ndc.z;
-                        //directional light未実装
-                        self.image.set_pixel(x as isize, y as isize, Vec3f::from_value(1.0));
+                        let n = (b0 / tri.x.point.w * tri.x.normal + b1 / tri.y.point.w * tri.y.normal + b2 / tri.z.point.w * tri.z.normal).normalize();
+                        let n = if is_back { -n } else { n };
+                        let kd = fragment_shader(n, p_ndc);
+                        self.image.set_pixel(x as isize, y as isize, kd);
                     }
                 }
             }
@@ -202,9 +219,9 @@ impl Scene {
     //wire frame
     pub fn render_line(&mut self) {
         for tri in &self.obj.triangles {
-            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x.point, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y.point, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z.point, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 
@@ -220,9 +237,9 @@ impl Scene {
 
     pub fn render_vertex(&mut self) {
         for tri in &self.obj.triangles {
-            let pixel0 = Scene::viewport_convert(tri.x, &self.camera.screen);
-            let pixel1 = Scene::viewport_convert(tri.y, &self.camera.screen);
-            let pixel2 = Scene::viewport_convert(tri.z, &self.camera.screen);
+            let pixel0 = Scene::viewport_convert(tri.x.point, &self.camera.screen);
+            let pixel1 = Scene::viewport_convert(tri.y.point, &self.camera.screen);
+            let pixel2 = Scene::viewport_convert(tri.z.point, &self.camera.screen);
 
             let (w, h) = self.image.get_size();
 

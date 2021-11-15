@@ -12,6 +12,7 @@ pub mod scene;
 pub mod light;
 pub mod bounding_box;
 pub mod vertex;
+pub mod shader;
 
 type Vec2f = Vector2<f32>;
 type Vec3f = Vector3<f32>;
