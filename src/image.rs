@@ -6,12 +6,10 @@ use std::io::Write;
 use std::isize;
 
 use cgmath::Array;
-use cgmath::Vector2;
-use cgmath::Vector3;
 use num::clamp;
 
-type Vec2f = Vector2<f32>;
-type Vec3f = Vector3<f32>;
+use crate::Vec2f;
+use crate::Vec3f;
 
 pub struct Image {
     width: usize,
@@ -27,7 +25,7 @@ impl Image {
         Self {
             width,
             height,
-            canvas: vec![Vector3::from_value(0.0); canvas_array_size as usize],
+            canvas: vec![Vec3f::from_value(0.0); canvas_array_size as usize],
             depth_canvas: vec![f32::INFINITY; canvas_array_size as usize],
         }
     }

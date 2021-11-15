@@ -1,8 +1,7 @@
 use cgmath::InnerSpace;
-use cgmath::Vector3;
-use crate::screen::Screen;
 
-type Vec3f = Vector3<f32>;
+use crate::Vec3f;
+use crate::screen::Screen;
 
 pub struct Camera {
     pub position: Vec3f,
