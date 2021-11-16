@@ -88,14 +88,14 @@ fn rasterize<'a>(file_path: impl Into<Cow<'a, str>>, render_vertex: bool, render
     println!("perspective division");
 
     //レンダリング
-    if render_vertex {
-        scene.render_vertex();
+    if render_raster {
+        scene.rasterize(true);
     }
     if render_line {
         scene.render_line();
     }
-    if render_raster {
-        scene.rasterize(true);
+    if render_vertex {
+        scene.render_vertex();
     }
     println!("rendering");
     
