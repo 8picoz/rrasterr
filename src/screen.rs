@@ -1,23 +1,23 @@
 pub struct Screen {
     //near clip
-    pub n: f32,
+    pub near_clip_distance: f32,
     //far clip
-    pub f: f32,
+    pub far_clip_distance: f32,
     pub right: f32,
     pub left: f32,
     pub top: f32,
     pub bottom: f32,
     //near clipの大きさ
     //width
-    pub w: f32,
+    pub width: f32,
     //height
-    pub h: f32,
+    pub height: f32,
 }
 
 impl Screen {
-    pub fn new(n: f32, f: f32, right: f32, left: f32, top: f32, bottom: f32) -> Self {
-        let w = right - left;
-        let h = top - bottom;
-        Self { n, f, right, left, top, bottom, w, h }
+    pub fn new(near_clip_distance: f32, far_clip_distance: f32, right: f32, left: f32, top: f32, bottom: f32) -> Self {
+        let width = right - left;
+        let height = top - bottom;
+        Self { near_clip_distance, far_clip_distance, right, left, top, bottom, width, height }
     }
 }

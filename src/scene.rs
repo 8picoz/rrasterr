@@ -138,7 +138,7 @@ impl Scene {
     }
 
     fn viewport_convert(vertex: Vec4f, screen: &Screen) -> Vec2f {
-        Vec2f::new((vertex.x + 1.0) * screen.w / 2.0, (vertex.y + 1.0) * screen.h / 2.0)
+        Vec2f::new((vertex.x + 1.0) * screen.width / 2.0, (vertex.y + 1.0) * screen.height / 2.0)
     }
 
     pub fn rasterize(&mut self, cull_backface: bool) {

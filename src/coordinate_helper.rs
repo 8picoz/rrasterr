@@ -25,9 +25,9 @@ pub fn view_matrix(camera: &Camera) -> Mat4f {
 
 pub fn projection_matrix(screen: &Screen) -> Mat4f {
     Matrix4::new(
-        (2.0 * screen.n) / screen.w, 0.0, 0.0, 0.0,
-        0.0, (2.0 * screen.n) / screen.h, 0.0, 0.0,
-        (screen.right + screen.left) / (screen.right - screen.left), (screen.top + screen.bottom) / (screen.top - screen.bottom), - ((screen.f + screen.n) / (screen.f - screen.n)), -1.0,
-        0.0, 0.0, - ((2.0 * screen.f * screen.n) / (screen.f - screen.n)), 0.0
+        (2.0 * screen.near_clip_distance) / screen.width, 0.0, 0.0, 0.0,
+        0.0, (2.0 * screen.near_clip_distance) / screen.height, 0.0, 0.0,
+        (screen.right + screen.left) / (screen.right - screen.left), (screen.top + screen.bottom) / (screen.top - screen.bottom), - ((screen.far_clip_distance + screen.near_clip_distance) / (screen.far_clip_distance - screen.near_clip_distance)), -1.0,
+        0.0, 0.0, - ((2.0 * screen.far_clip_distance * screen.near_clip_distance) / (screen.far_clip_distance - screen.near_clip_distance)), 0.0
     )
 }
